@@ -11,13 +11,12 @@ class MainPage:
 
         """открыть главную страницу"""
 
-    SOURCH_FIELD = (By.XPATH, "//input[@placeholder='Фильмы, сериалы, персоны']")
-
+    SEARCH_FIELD = (By.XPATH, "//input[@placeholder='Фильмы, сериалы, персоны']")
 
     def open_main_page(self, url="https://www.kinopoisk.ru/"):
         self.driver.get(url)
 
-    def make_sourch(self, query):
+    def make_search(self, query):
         search_input = self.wait.until(
             EC.presence_of_element_located(
                 (self.SOURCH_FIELD)

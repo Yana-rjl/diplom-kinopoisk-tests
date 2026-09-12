@@ -7,7 +7,7 @@ class TicketsPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
 
-    def open_tickets_section(self, url="https://afisha.kinopoisk.ru/"):
+    def open_tickets_section(self, url="https://www.kinopoisk.ru/"):
         """Открывает раздел 'Билеты в кино'."""
         self.driver.get(url)
 

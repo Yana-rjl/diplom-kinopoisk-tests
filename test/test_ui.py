@@ -46,8 +46,8 @@ def test_keywords_filter_finds_movies(driver):
     
 
     with allure.step(f"Шаг 2: Ввод поискового запроса '{query}'"):
-        main.make_sourch(query)
-        allure.attach(query, name="Введённый запрос", type=allure.attachment_type.TEXT)
+        main.make_search(query)
+        allure.attach(query, name="Введённый запрос", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step("Шаг 3: Отправка запроса (нажатие Enter/Submit)"):
          main.search_input
@@ -57,7 +57,7 @@ def test_keywords_filter_finds_movies(driver):
         results = driver.find_elements(By.CSS_SELECTOR, ".selection-card, .film-item")
         
         count = len(results)
-        allure.attach(str(count), name="Количество найденных карточек", type=allure.attachment_type.TEXT)
+        allure.attach(str(count), name="Количество найденных карточек", attachment_type=allure.attachment_type.TEXT)
         assert count > 0, f"Не найдены фильмы по запросу '{query}'. Найдено: {count}"
 
 @allure.feature("UI Кинопоиск")
@@ -74,16 +74,23 @@ def test_store_button_leads_to_buy_page(driver):
         store_button = main.find_button("Магазин")
         assert store_button is not None, "Кнопка 'Магазин' не найдена"
         
-    with allure.step("Шаг 3: Проверить кликабельна ли кнопка"):
-        is_clickable = store_button.is_clickable()
-        assert is_clickable, "Кнопка 'Магазин' не кликабельна"
+    with allure.step("Шаг 3: Проверка, что кнопка кликабельна (авто-ожидание)"):
+    # Мы просто пытаемся кликнуть. Если элемент не кликабель, WebDriverWait выбросит исключение.
+    # Это надежнее, чем проверять булево значение.
+        wait = WebDriverWait(driver, 10)
+    try:
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, store_button.get_attribute("cssSelector")))) 
+        # Примечание: store_button - это уже WebElement. Проще сделать так:
+        wait.until(lambda d: store_button.is_enabled() and d.find_element(By.ID, store_button.id).is_displayed())
+    except Exception:
+        pytest.fail("Кнопка 'Магазин' не стала кликабельной за 10 секунд")
         
     with allure.step("Шаг 4: Нажать на кнопку и проверить переход на страницу покупки"):
         store_button.click()
         
         # Ожидание загрузки страницы покупки
         wait_for_element(driver, (By.CSS_SELECTOR, ".buy-film-page"))
-        allure.attach(name="Страница покупки фильма", type=allure.attachment_type.TEXT)     
+        allure.attach(name="Страница покупки фильма", attachment_type=allure.attachment_type.TEXT)  
 
 
 @allure.feature("UI Кинопоиск")
@@ -99,9 +106,8 @@ def test_flag_adds_to_watchlist(driver):
 
     with allure.step("Шаг 2: Ввод поискового запроса"):
         query = "зеленая миля"
-        main.make_sourch(query)
-        allure.attach(query, name="Введённый запрос",
-                      type=allure.attachment_type.TEXT)
+        main.make_search(query)
+        allure.attach(query, name="Введённый запрос", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step("Шаг 3: Ожидание результатов поиска"):
         wait_for_element(driver, (By.CSS_SELECTOR, ".selection-card, .film-item"))
@@ -115,8 +121,7 @@ def test_flag_adds_to_watchlist(driver):
     with allure.step("Шаг 5: Проверить кликабельность флажка"):
         # Запоминаем класс/состояние до клика
         class_before = flag_button.get_attribute("class")
-        allure.attach(class_before, name="Класс флажка до клика",
-                      type=allure.attachment_type.TEXT)
+        allure.attach(class_before, name="Класс флажка до клика", attachment_type=allure.attachment_type.TEXT)
 
         wait_for_clickable(driver, (By.CSS_SELECTOR,
                             "[data-tid='flag_button'], .flag-icon, .watchlist-button"))
@@ -138,8 +143,7 @@ def test_flag_adds_to_watchlist(driver):
             "[data-tid='flag_button'], .flag-icon, .watchlist-button"
         )
         class_after = flag_after.get_attribute("class")
-        allure.attach(class_after, name="Класс флажка после клика",
-                      type=allure.attachment_type.TEXT)
+        allure.attach(class_after, name="Класс флажка после клика", attachment_type=allure.attachment_type.TEXT)
 
         assert class_after != class_before, (
             "Состояние флажка не изменилось — фильм не добавлен в 'Буду смотреть'"
@@ -153,11 +157,9 @@ def test_flag_adds_to_watchlist(driver):
         )
         # Даже если уведомление не появилось, изменение класса уже подтверждает добавление
         if len(notification) > 0:
-            allure.attach("Уведомление о добавлении отображается",
-                          name="Результат", type=allure.attachment_type.TEXT)
+            allure.attach("Уведомление о добавлении отображается", name="Результат", attachment_type=allure.attachment_type.TEXT)
         else:
-            allure.attach("Уведомление не найдено, но класс флажка изменился",
-                          name="Результат", type=allure.attachment_type.TEXT)
+            allure.attach("Уведомление не найдено, но класс флажка изменился", name="Результат", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step("Шаг 9: Перейти в раздел 'Буду смотреть' и проверить наличие фильма"):
         main.go_to_watchlist()
@@ -169,8 +171,7 @@ def test_flag_adds_to_watchlist(driver):
             ".watchlist-item, .collection-item, [data-tid='watchlist_content']"
         )
         count = len(watchlist_items)
-        allure.attach(str(count), name="Количество фильмов в 'Буду смотреть'",
-                      type=allure.attachment_type.TEXT)
+        allure.attach(str(count), name="Количество фильмов в Буду смотреть", attachment_type=allure.attachment_type.TEXT)
 
         assert count > 0, "Раздел 'Буду смотреть' пуст — фильм не добавлен"
 
@@ -215,8 +216,7 @@ def test_genre_dropdown_selection(driver):
         target_genre = "Комедия"
         selected_item = page.select_genre_by_text(target_genre)
         assert selected_item is not None, f"Жанр '{target_genre}' не найден в списке"
-        allure.attach(target_genre, name="Выбранный жанр",
-                      type=allure.attachment_type.TEXT)
+        allure.attach(target_genre, name="Выбранный жанр", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step("Шаг 6: Подтвердить закрытие выпадающего списка и применение фильтра"):
         # После клика список должен закрыться, фильтр примениться
@@ -231,8 +231,7 @@ def test_genre_dropdown_selection(driver):
             ".genre-pill, .filter-tag, [data-tid='active_genre']"
         )
         filter_texts = [el.text.strip() for el in active_filters]
-        allure.attach("\n".join(filter_texts), name="Активные фильтры",
-                      type=allure.attachment_type.TEXT)
+        allure.attach("\n".join(filter_texts), name="Активные фильтры", attachment_type=allure.attachment_type.TEXT)
 
         assert target_genre in filter_texts, (
             f"Фильтр по жанру '{target_genre}' не применился"
@@ -242,8 +241,7 @@ def test_genre_dropdown_selection(driver):
         results = driver.find_elements(By.CSS_SELECTOR,
                                        ".movie-card, .event-item, .schedule-row")
         count = len(results)
-        allure.attach(str(count), name="Количество найденных событий",
-                      type=allure.attachment_type.TEXT)
+        allure.attach(str(count), name="Количество найденных событий", attachment_type=allure.attachment_type.TEXT)
 
         assert count > 0, "После фильтрации по жанру не найдено ни одного события"
         

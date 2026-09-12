@@ -206,3 +206,8 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 # Created by pytest automatically.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.vscode/
+allure-results/
