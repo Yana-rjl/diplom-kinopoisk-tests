@@ -66,31 +66,29 @@ def test_keywords_filter_finds_movies(driver):
 def test_store_button_leads_to_buy_page(driver):
     """Тест 2: Кнопка 'Магазин' ведёт на страницу покупки фильма."""
     main = MainPage(driver)
-    
+
     with allure.step("Шаг 1: Переход на главную страницу"):
         main.open_main_page()
-        
+
     with allure.step("Шаг 2: Найти кнопку 'Магазин'"):
         store_button = main.find_button("Магазин")
         assert store_button is not None, "Кнопка 'Магазин' не найдена"
-        
-    with allure.step("Шаг 3: Проверка, что кнопка кликабельна (авто-ожидание)"):
-    # Мы просто пытаемся кликнуть. Если элемент не кликабель, WebDriverWait выбросит исключение.
-    # Это надежнее, чем проверять булево значение.
+
+    with allure.step("Шаг 3: Проверка, что кнопка кликабельна"):
         wait = WebDriverWait(driver, 10)
-    try:
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, store_button.get_attribute("cssSelector")))) 
-        # Примечание: store_button - это уже WebElement. Проще сделать так:
-        wait.until(lambda d: store_button.is_enabled() and d.find_element(By.ID, store_button.id).is_displayed())
-    except Exception:
-        pytest.fail("Кнопка 'Магазин' не стала кликабельной за 10 секунд")
-        
+        try:
+            wait.until(EC.element_to_be_clickable(store_button))
+        except Exception:
+            pytest.fail("Кнопка 'Магазин' не стала кликабельной за 10 секунд")
+
     with allure.step("Шаг 4: Нажать на кнопку и проверить переход на страницу покупки"):
         store_button.click()
-        
-        # Ожидание загрузки страницы покупки
         wait_for_element(driver, (By.CSS_SELECTOR, ".buy-film-page"))
-        allure.attach(name="Страница покупки фильма", attachment_type=allure.attachment_type.TEXT)  
+        allure.attach(
+            body="Переход на страницу покупки выполнен",
+            name="Страница покупки фильма",
+            attachment_type=allure.attachment_type.TEXT,
+        )
 
 
 @allure.feature("UI Кинопоиск")
@@ -194,7 +192,7 @@ def test_genre_dropdown_selection(driver):
 
     with allure.step("Шаг 1: Переход в раздел 'Билеты в кино'"):
         page.open_tickets_section()
-        wait_for_element(driver, (By.CSS_SELECTOR, ".afisha-page, .schedule-block"))
+        wait_for_element(driver, (By.CSS_SELECTOR, 'a[href="/lists/movies/movies-in-cinema/"]'))
 
     with allure.step("Шаг 2: Найти кнопку выпадающего списка жанров"):
         genre_btn = page.find_genre_dropdown_button()

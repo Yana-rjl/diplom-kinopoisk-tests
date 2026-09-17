@@ -37,15 +37,15 @@ def test_search_movie_by_name(session):
     query = "Зелёная миля"
 
     with allure.step(f"Шаг 1: Подготовка параметров поиска"):
-        allure.attach(query, name="Поисковый запрос", type=allure.attachment_type.TEXT)
+        allure.attach(query, name="Поисковый запрос", attachment_type=allure.attachment_type.TEXT)
         assert query, "Запрос на поиск не может быть пустым"
 
     with allure.step(f"Шаг 2: Отправка GET-запроса к эндпоинту /movie/search"):
         response = search_by_name(session, query=query)
         
         # Добавляем детали запроса в отчет
-        allure.attach(response.url, name="URL запроса", type=allure.attachment_type.TEXT)
-        allure.attach(str(response.status_code), name="Статус код ответа", type=allure.attachment_type.TEXT)
+        allure.attach(response.url, name="URL запроса", attachment_type=allure.attachment_type.TEXT)
+        allure.attach(str(response.status_code), name="Статус код ответа", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step(f"Шаг 3: Проверка статуса ответа"):
         assert response.status_code == 200, f"Ожидался статус 200, получен {response.status_code}: {response.text}"
@@ -78,11 +78,11 @@ def test_search_movie_by_id(session):
 
    with allure.step(f"Шаг 1: Формирование URL для получения фильма по ID {movie_id}"):
         url = f"{Config.BASE_URL_API}/movie/{movie_id}"
-        allure.attach(url, name="Целевой URL", type=allure.attachment_type.TEXT)
+        allure.attach(url, name="Целевой URL", attachment_type=allure.attachment_type.TEXT)
 
    with allure.step(f"Шаг 2: Выполнение запроса к ресурсу /movie/{{id}}"):
         response = session.get(url)
-        allure.attach(str(response.status_code), name="Статус код", type=allure.attachment_type.TEXT)
+        allure.attach(str(response.status_code), name="Статус код", attachment_type=allure.attachment_type.TEXT)
 
    with allure.step(f"Шаг 3: Проверка успешности запроса"):
         assert response.status_code == 200, f"Ошибка при получении фильма: {response.text}"
@@ -109,7 +109,7 @@ def test_search_movie_by_partial_name(session):
 
     with allure.step(f"Шаг 1: Отправка запроса с частичным названием '{query}'"):
         response = search_by_name(session, query=query)
-        allure.attach(response.url, name="URL запроса", type=allure.attachment_type.TEXT)
+        allure.attach(response.url, name="URL запроса", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step(f"Шаг 2: Проверка статуса ответа"):
         assert response.status_code == 200, f"Ожидался статус 200, получен {response.status_code}"
@@ -142,7 +142,7 @@ def test_search_movie_without_name(session):
 
     with allure.step(f"Шаг 1: Попытка поиска с пустым запросом"):
         response = search_by_name(session, query=query)
-        allure.attach(str(response.status_code), name="Полученный статус код", type=allure.attachment_type.TEXT)
+        allure.attach(str(response.status_code), name="Полученный статус код", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step(f"Шаг 2: Проверка ожидаемой ошибки API"):
         # API может вернуть 400 (параметр обязателен) — это корректное поведение
@@ -153,7 +153,7 @@ def test_search_movie_without_name(session):
 
     with allure.step(f"Шаг 3: Проверка тела ответа на наличие описания ошибки"):
         data = response.json()
-        allure.attach(json.dumps(data, ensure_ascii=False, indent=2), name="Тело ошибки", type=allure.attachment_type.JSON)
+        allure.attach(json.dumps(data, ensure_ascii=False, indent=2), name="Тело ошибки", attachment_type=allure.attachment_type.JSON)
         assert "message" in data or "error" in data, (
             "В ответе нет поля 'message' или 'error' с описанием ошибки"
         )
@@ -167,19 +167,19 @@ def test_search_movie_with_invalid_year(session):
 
     with allure.step(f"Шаг 1: Отправка запроса с некорректным годом {year}"):
         response = search_with_filters(session, year=year, page=1, limit=10)
-        allure.attach(response.url, name="URL с фильтром года", type=allure.attachment_type.TEXT)
+        allure.attach(response.url, name="URL с фильтром года", attachment_type=allure.attachment_type.TEXT)
 
     with allure.step(f"Шаг 2: Анализ ответа API на некорректный год"):
         if response.status_code == 200:
             data = response.json()
-            allure.attach(json.dumps(data, ensure_ascii=False, indent=2), name="Ответ API (200)", type=allure.attachment_type.JSON)
+            allure.attach(json.dumps(data, ensure_ascii=False, indent=2), name="Ответ API (200)", attachment_type=allure.attachment_type.JSON)
             # Если API возвращает 200, список должен быть пустым
             assert len(data.get("docs", [])) == 0, (
                 "Найдены фильмы с несуществующим годом 999999 — некорректное поведение API"
             )
         elif response.status_code == 400:
             data = response.json()
-            allure.attach(json.dumps(data, ensure_ascii=False, indent=2), name="Ответ API (400)", type=allure.attachment_type.JSON)
+            allure.attach(json.dumps(data, ensure_ascii=False, indent=2), name="Ответ API (400)", attachment_type=allure.attachment_type.JSON)
             # Если API возвращает 400 — это тоже допустимая реакция
             assert "message" in data or "error" in data, (
                 "В ответе нет описания ошибки для некорректного года"

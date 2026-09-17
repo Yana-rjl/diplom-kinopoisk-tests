@@ -211,3 +211,4 @@ __pycache__/
 .pytest_cache/
 .vscode/
 allure-results/
+.env

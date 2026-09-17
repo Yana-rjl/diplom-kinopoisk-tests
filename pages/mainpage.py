@@ -19,7 +19,7 @@ class MainPage:
     def make_search(self, query):
         search_input = self.wait.until(
             EC.presence_of_element_located(
-                (self.SOURCH_FIELD)
+                (self.SEARCH_FIELD)
         )
     )
         search_input.clear()
