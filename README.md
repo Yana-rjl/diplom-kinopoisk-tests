@@ -1,22 +1,24 @@
+# Название проекта
 Учебный репозиторий - Дипломная работа
-Проект содержит 5 UI тестов и 5 api тестов
-Ссылка нв финальный проект по ручному тестированию: https://kursovaya1.yonote.ru/doc/kursovaya-rabota-2-kurs-ruchnoe-testirovanie-8wmoIBbvt6
-Структура проекта: Диплом: папка Pages(файлы: mainpage.py, tickets_page.py)
-                           папка test (файлы: __init__.py, test_api.py, test_ui.py)
-                           файл .gitignore
-                           файл config.py
-                           файл conftest.py
-                           файл pytest.ini
-                           файл README.md
-                           файл requirements.txt
 
-pytest==8.3.2
-selenium==4.25.0
-webdriver-manager==4.9.3
-requests==2.32.3
-allure-pytest==3.2.5
-pytest-html==4.1.1
+## Описание
+Тестируем сайт онлайн-кинотеатра www.kinopoisk.ru. Тестирую три элемента: строка поиска, возможность купить фильм для онлайн просмотра, возможность купить билет в кинотеатр. Составлено 4 теста UI и 5 тестов API
 
-Запустить ui тесты командой: pytest test_ui.py
-Запустить api тесты командой: pytest test_api.py
-Запустить все тесты: pytest tests
+## Структура проекта
+- `pages/` — page-объекты
+- `test/` — тесты
+- '.gitignore' - исключает из репозитория временные файлы, виртуальные окружения, логи
+- 'config.py' — хранит настройки, которые могут меняться между окружениями (dev/stage/prod).
+- 'conftest.py' — определяет общие фикстуры (например, инициализацию браузера, вход в систему), доступные всем тестам.
+- 'pytest.ini'— настраивает поведение pytest: какие тесты запускать, как выводить результаты, какие плагины использовать.
+- 'requirements.txt' — список библиотек и их версий, необходимых для работы проекта.
+
+## Запуск тестов
+```bash
+pip install -r requirements.txt
+pytest          # все тесты
+pytest -m ui    # только UI
+pytest -m api   # только API
+
+##Ссылка на финальный проект по ручному тестированию
+(https://kursovaya1.yonote.ru/doc/kursovaya-rabota-2-kurs-ruchnoe-testirovanie-8wmoIBbvt6)
