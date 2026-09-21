@@ -49,8 +49,10 @@ def test_keywords_filter_finds_movies(driver):
         main.make_search(query)
         allure.attach(query, name="Введённый запрос", attachment_type=allure.attachment_type.TEXT)
 
-    with allure.step("Шаг 3: Отправка запроса (нажатие Enter/Submit)"):
-         main.search_input
+    with allure.step("Шаг 3: Отправка запроса (клик по кнопке поиска)"):
+        submit_btn = driver.find_element(By.CSS_SELECTOR, ".search-form-submit-button svg")
+        submit_btn.click()
+        
 
     with allure.step("Шаг 4: Ожидание результатов поиска и проверка наличия карточек"):
         wait_for_element(driver, (By.CSS_SELECTOR, ".selection-card, .film-item"))

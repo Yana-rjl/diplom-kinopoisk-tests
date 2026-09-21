@@ -7,7 +7,7 @@ API_TOKEN = os.getenv("API_TOKEN")
 
 class Config:
     
-    API_TOKEN = "1061QKD-H8GMMVA-KCCHRV1-983ZBH2"
+    API_TOKEN = os.getenv("API_TOKEN")
     
     
     BASE_URL_UI = "https://www.kinopoisk.ru/"

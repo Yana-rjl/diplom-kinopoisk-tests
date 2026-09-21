@@ -20,5 +20,5 @@ pytest          # все тесты
 pytest -m ui    # только UI
 pytest -m api   # только API
 
-##Ссылка на финальный проект по ручному тестированию
-(https://kursovaya1.yonote.ru/doc/kursovaya-rabota-2-kurs-ruchnoe-testirovanie-8wmoIBbvt6)
+## Ссылка на финальный проект по ручному тестированию
+[Финальный проект по ручному тестированию](https://kursovaya1.yonote.ru/doc/kursovaya-rabota-2-kurs-ruchnoe-testirovanie-8wmoIBbvt6)
